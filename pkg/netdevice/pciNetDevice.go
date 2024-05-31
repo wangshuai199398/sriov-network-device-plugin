@@ -40,11 +40,13 @@ func NewPciNetDevice(dev *ghw.PCIDevice,
 
 	driverName, err := utils.GetDriverName(dev.Address)
 	if err != nil {
+		glog.Infof("can not get driver for device %v, err: %v", dev.Address, err)
 		return nil, err
 	}
 
 	infoProviders := rFactory.GetDefaultInfoProvider(dev.Address, driverName)
 	if rc.AdditionalInfo != nil {
+		glog.Infof("AdditionalInfo: %v", rc.AdditionalInfo)
 		infoProviders = append(infoProviders, infoprovider.NewExtraInfoProvider(dev.Address, rc.AdditionalInfo))
 	}
 
@@ -82,19 +84,23 @@ func NewPciNetDevice(dev *ghw.PCIDevice,
 
 	hostDev, err := devices.NewHostDeviceImpl(dev, dev.Address, rFactory, rc, infoProviders)
 	if err != nil {
+		glog.Infof("NewHostDeviceImpl err: %v", err)
 		return nil, err
 	}
 
 	pciDev, err := devices.NewGenPciDevice(dev)
 	if err != nil {
+		glog.Infof("NewGenPciDevice err: %v", err)
 		return nil, err
 	}
 
 	netDev, err := devices.NewGenNetDevice(dev.Address, types.NetDeviceType, isRdma)
 	if err != nil {
+		glog.Infof("NewGenNetDevice err: %v", err)
 		return nil, err
 	}
 
+	glog.Infof("get pciNetDevice hostDev: %v, pciDev: %v, netDev: %v, vdpaDev: %v", hostDev, pciDev, netDev, vdpaDev)
 	return &pciNetDevice{
 		HostDevice:   hostDev,
 		GenPciDevice: *pciDev,

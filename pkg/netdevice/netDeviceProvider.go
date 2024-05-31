@@ -43,6 +43,7 @@ func (np *netDeviceProvider) GetDiscoveredDevices() []*ghw.PCIDevice {
 
 func (np *netDeviceProvider) GetDevices(rc *types.ResourceConfig, selectorIndex int) []types.HostDevice {
 	newHostDevices := make([]types.HostDevice, 0)
+	glog.Infof("range np.deviceList %v", np.deviceList)
 	for _, device := range np.deviceList {
 		if newDevice, err := NewPciNetDevice(device, np.rFactory, rc, selectorIndex); err == nil {
 			newHostDevices = append(newHostDevices, newDevice)
